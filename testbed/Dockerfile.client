@@ -1,0 +1,18 @@
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    iproute2 \
+    iputils-ping \
+    python3 \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /var/www \
+    && python3 -c "open('/var/www/small.bin','wb').write(b'x'*4096); open('/var/www/page.html','w').write('<html><body>'+'A'*8192+'</body></html>')"
+
+COPY entrypoint-client.sh /entrypoint-client.sh
+COPY client_sinks.py /usr/local/bin/client_sinks.py
+COPY client_send.py /usr/local/bin/client_send.py
+RUN chmod +x /entrypoint-client.sh /usr/local/bin/client_sinks.py /usr/local/bin/client_send.py
+
+WORKDIR /var/www
+ENTRYPOINT ["/entrypoint-client.sh"]

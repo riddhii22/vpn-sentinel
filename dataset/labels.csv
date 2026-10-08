@@ -1,0 +1,16 @@
+config_id,traffic_type,path,ike_version,mode,requested_mode,encryption,integrity,dh_group,pfs,weak,ground_truth
+C1,bulk,C1/bulk.pcap,2,tunnel,tunnel,AES-128-CBC,HMAC-SHA256,14,True,False,True
+C1,email,C1/email.pcap,2,tunnel,tunnel,AES-128-CBC,HMAC-SHA256,14,True,False,True
+C1,ping,C1/ping.pcap,2,tunnel,tunnel,AES-128-CBC,HMAC-SHA256,14,True,False,True
+C1,voip,C1/voip.pcap,2,tunnel,tunnel,AES-128-CBC,HMAC-SHA256,14,True,False,True
+C1,web,C1/web.pcap,2,tunnel,tunnel,AES-128-CBC,HMAC-SHA256,14,True,False,True
+C10,ping,C10/ping.pcap,1,tunnel,tunnel,AES-128-CBC,HMAC-SHA1,2,False,True,True
+C2,ping,C2/ping.pcap,2,tunnel,tunnel,AES-256-CBC,HMAC-SHA256,14,True,False,True
+C3,ping,C3/ping.pcap,2,tunnel,tunnel,AES-128-GCM,AEAD,19,True,False,True
+C4,ping,C4/ping.pcap,2,tunnel,tunnel,AES-256-GCM,AEAD,20,True,False,True
+C5,ping,C5/ping.pcap,2,tunnel,transport,AES-256-GCM,AEAD,19,True,False,True
+C6,ping,C6/ping.pcap,2,tunnel,transport,AES-128-CBC,HMAC-SHA256,14,False,False,True
+C7,ping,C7/ping.pcap,2,tunnel,tunnel,AES-128-CBC,HMAC-SHA1,2,False,True,True
+C8,ping,C8/ping.pcap,2,tunnel,tunnel,3DES,HMAC-SHA1,2,False,True,True
+C8,voip,C8/voip.pcap,2,tunnel,tunnel,3DES,HMAC-SHA1,2,False,True,True
+C8,web,C8/web.pcap,2,tunnel,tunnel,3DES,HMAC-SHA1,2,False,True,True

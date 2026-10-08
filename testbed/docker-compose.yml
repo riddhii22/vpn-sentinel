@@ -1,0 +1,130 @@
+name: vpn-sentinel-testbed
+
+services:
+  gw-a:
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway
+    hostname: gw-a
+    privileged: true
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    sysctls:
+      net.ipv4.ip_forward: "1"
+      net.ipv4.conf.all.rp_filter: "0"
+      net.ipv4.conf.default.rp_filter: "0"
+    environment:
+      ROLE: gw-a
+    volumes:
+      - ./runtime/gw-a:/etc/swanctl:ro
+    networks:
+      transit:
+        ipv4_address: 10.10.0.10
+      left:
+        ipv4_address: 10.1.0.1
+    healthcheck:
+      test: ["CMD", "swanctl", "--stats"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+      start_period: 3s
+
+  gw-b:
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway
+    hostname: gw-b
+    privileged: true
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    sysctls:
+      net.ipv4.ip_forward: "1"
+      net.ipv4.conf.all.rp_filter: "0"
+      net.ipv4.conf.default.rp_filter: "0"
+    environment:
+      ROLE: gw-b
+    volumes:
+      - ./runtime/gw-b:/etc/swanctl:ro
+    networks:
+      transit:
+        ipv4_address: 10.10.0.20
+      right:
+        ipv4_address: 10.2.0.1
+    healthcheck:
+      test: ["CMD", "swanctl", "--stats"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+      start_period: 3s
+
+  client-a:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    hostname: client-a
+    cap_add:
+      - NET_ADMIN
+    environment:
+      CLIENT_ROLE: a
+    networks:
+      left:
+        ipv4_address: 10.1.0.10
+    depends_on:
+      gw-a:
+        condition: service_healthy
+
+  client-b:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    hostname: client-b
+    cap_add:
+      - NET_ADMIN
+    environment:
+      CLIENT_ROLE: b
+    networks:
+      right:
+        ipv4_address: 10.2.0.10
+    depends_on:
+      gw-b:
+        condition: service_healthy
+
+  capture:
+    build:
+      context: .
+      dockerfile: Dockerfile.capture
+    network_mode: service:gw-a
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ../dataset:/dataset
+    depends_on:
+      gw-a:
+        condition: service_healthy
+
+networks:
+  transit:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.0.0/24
+          gateway: 10.10.0.1
+  left:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.1.0.0/24
+          gateway: 10.1.0.254
+  right:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.2.0.0/24
+          gateway: 10.2.0.254

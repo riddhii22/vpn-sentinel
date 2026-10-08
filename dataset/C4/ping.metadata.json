@@ -1,0 +1,22 @@
+{
+  "config_id": "C4",
+  "ike_version": 2,
+  "mode": "tunnel",
+  "requested_mode": "tunnel",
+  "encryption": "AES-256-GCM",
+  "integrity": "AEAD",
+  "dh_group": 20,
+  "pfs": true,
+  "ip": "v4",
+  "ike_proposal": "aes256gcm16-prfsha256-ecp384",
+  "esp_proposal": "aes256gcm16-ecp384",
+  "traffic_type": "ping",
+  "weak": false,
+  "ping_from": "client-a",
+  "ping_target": "10.2.0.10",
+  "pcap": "ping.pcap",
+  "ground_truth": true,
+  "lab_only": true,
+  "generated_at": "2026-10-07T16:19:18.941372+00:00",
+  "note": "Lab capture. PSK is a published dummy. Do not use on a real network."
+}

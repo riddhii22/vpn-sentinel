@@ -1,0 +1,118 @@
+# YAML is the policy. Analyzer code only supplies facts.
+# `when` must match a predicate in app/analyzer/rules.py.
+# Scores: REQUIREMENTS.md additive model (higher = riskier). PPT 100−penalty is NOT used.
+
+rules:
+  - id: IKE-001
+    when: ikev1_present
+    title: IKEv1 Detected
+    severity: critical
+    score: 30
+    description: IKEv1 is an older VPN key-exchange protocol.
+    recommendation: Disable IKEv1 and migrate the tunnel to IKEv2.
+
+  - id: IKE-002
+    when: ikev2_present
+    title: IKEv2 In Use
+    severity: info
+    score: 0
+    description: IKEv2 is the current IETF key-exchange protocol for IPsec.
+    recommendation: IKEv2 detected. Cryptographic policy still requires assessment.
+
+  - id: ENC-001
+    when: weak_encryption
+    title: Weak Encryption Algorithm Detected
+    severity: high
+    score: 20
+    description: Legacy ciphers (DES/3DES) were advertised in IKE SA transforms.
+    recommendation: Replace weak ciphers (DES/3DES) with AES-256.
+
+  - id: ENC-002
+    when: aes_cbc
+    title: AES-CBC in use (AEAD preferred)
+    severity: info
+    score: 0
+    description: AES-CBC is acceptable. Modern AEAD (AES-GCM) is preferred when both peers support it. Score 0 so this does not inflate risk.
+    recommendation: Prefer AES-GCM (or another AEAD) if both VPN endpoints support it.
+
+  - id: ENC-003
+    when: aes_gcm
+    title: AES-GCM (AEAD) detected
+    severity: info
+    score: 0
+    description: AES-GCM provides encryption and integrity together (AEAD).
+    recommendation: Keep AES-GCM unless a documented exception requires otherwise.
+
+  - id: ENC-004
+    when: aes_128
+    title: AES-128 observed
+    severity: info
+    score: 0
+    description: AES-128 is recorded when advertised. REQUIREMENTS treats AES-128 vs AES-256 as context-dependent.
+    recommendation: Prefer AES-256 where policy requires a longer key length.
+
+  - id: ENC-005
+    when: aes_256
+    title: AES-256 observed
+    severity: info
+    score: 0
+    description: AES-256 was advertised in a cleartext IKE SA transform.
+    recommendation: Keep AES-256 unless a documented exception requires otherwise.
+
+  - id: HASH-001
+    when: weak_hash
+    title: Weak integrity or hash algorithm
+    severity: medium
+    score: 10
+    description: MD5/SHA-1 HMAC are outdated. PPT lists SHA-1 as Warning; REQUIREMENTS flags weak integrity.
+    recommendation: Prefer SHA-256 or stronger (or AEAD so a separate hash is not required).
+
+  - id: DH-001
+    when: weak_dh
+    title: Weak Diffie-Hellman Group Detected
+    severity: high
+    score: 20
+    description: A small MODP DH group was advertised in IKE.
+    recommendation: Use a stronger DH group such as 14, 19, or 20.
+
+  - id: PFS-001
+    when: pfs_disabled
+    title: Perfect Forward Secrecy Disabled
+    severity: high
+    score: 15
+    description: Child SA negotiation indicated PFS was off.
+    recommendation: Enable PFS (new DH per Child SA) where the VPN platform supports it.
+
+  - id: NATT-001
+    when: natt_present
+    title: NAT traversal (UDP/4500) observed
+    severity: info
+    score: 0
+    description: NAT-T is not a weakness by itself; it is recorded when UDP/4500 is present.
+    recommendation: Confirm NAT-T is expected for this path.
+
+  - id: MODE-001
+    when: mode_transport
+    title: Transport mode observed
+    severity: medium
+    score: 10
+    description: Transport mode exposes inner IP headers compared with tunnel mode. Only fires when mode is actually parsed.
+    recommendation: Prefer tunnel mode on untrusted networks if the design allows it.
+
+  - id: LIFE-001
+    when: lifetime_gt
+    max_seconds: 86400
+    title: Very long SA lifetime
+    severity: medium
+    score: 10
+    description: Fires only when a cleartext lifetime exceeds 86400 seconds (24 hours).
+    recommendation: Shorten IKE/IPsec lifetimes if operationally acceptable.
+
+  - id: ESP-ANOM
+    when: esp_metadata_outlier
+    origin: ml_anomaly
+    title: Unusual ESP size/timing (metadata)
+    severity: medium
+    score: 0
+    description: IsolationForest compared this capture's ESP flow size and timing to bundled lab samples. Payloads were not decrypted. This is not a cipher finding and not web/video/voice classification.
+    recommendation: Treat ESP-ANOM as traffic-shape telemetry only. It does not change the VPN risk score and does not identify inner applications.

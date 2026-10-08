@@ -1,0 +1,22 @@
+{
+  "config_id": "C10",
+  "ike_version": 1,
+  "mode": "tunnel",
+  "requested_mode": "tunnel",
+  "encryption": "AES-128-CBC",
+  "integrity": "HMAC-SHA1",
+  "dh_group": 2,
+  "pfs": false,
+  "ip": "v4",
+  "ike_proposal": "aes128-sha1-modp1024",
+  "esp_proposal": "aes128-sha1",
+  "traffic_type": "ping",
+  "weak": true,
+  "ping_from": "client-a",
+  "ping_target": "10.2.0.10",
+  "pcap": "ping.pcap",
+  "ground_truth": true,
+  "lab_only": true,
+  "generated_at": "2026-10-07T16:32:39.296199+00:00",
+  "note": "Deliberately IKEv1 plus SHA-1 and DH 2 (IKE-001 + HASH-001 + DH-001)."
+}

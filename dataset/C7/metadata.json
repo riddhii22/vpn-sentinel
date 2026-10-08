@@ -1,0 +1,22 @@
+{
+  "config_id": "C7",
+  "ike_version": 2,
+  "mode": "tunnel",
+  "requested_mode": "tunnel",
+  "encryption": "AES-128-CBC",
+  "integrity": "HMAC-SHA1",
+  "dh_group": 2,
+  "pfs": false,
+  "ip": "v4",
+  "ike_proposal": "aes128-sha1-modp1024",
+  "esp_proposal": "aes128-sha1",
+  "traffic_type": "ping",
+  "weak": true,
+  "ping_from": "client-a",
+  "ping_target": "10.2.0.10",
+  "pcap": "ping.pcap",
+  "ground_truth": true,
+  "lab_only": true,
+  "generated_at": "2026-10-07T16:27:23.768208+00:00",
+  "note": "Deliberately weak (SHA-1, DH 2, no PFS) so the assessment engine has something to flag."
+}

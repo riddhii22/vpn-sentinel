@@ -1,0 +1,23 @@
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    strongswan \
+    strongswan-swanctl \
+    strongswan-charon \
+    libcharon-extra-plugins \
+    libstrongswan-extra-plugins \
+    libstrongswan-standard-plugins \
+    iproute2 \
+    iptables \
+    iputils-ping \
+    procps \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY entrypoint-gw.sh /entrypoint-gw.sh
+COPY charon-logging.conf /etc/strongswan.d/charon-logging.conf
+COPY kernel-libipsec.conf /etc/strongswan.d/charon/kernel-libipsec.conf
+COPY constraints.conf /etc/strongswan.d/charon/constraints.conf
+RUN chmod +x /entrypoint-gw.sh
+
+ENTRYPOINT ["/entrypoint-gw.sh"]

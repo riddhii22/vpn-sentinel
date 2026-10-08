@@ -1,0 +1,22 @@
+{
+  "config_id": "C5",
+  "ike_version": 2,
+  "mode": "tunnel",
+  "requested_mode": "transport",
+  "encryption": "AES-256-GCM",
+  "integrity": "AEAD",
+  "dh_group": 19,
+  "pfs": true,
+  "ip": "v4",
+  "ike_proposal": "aes256gcm16-prfsha256-ecp256",
+  "esp_proposal": "aes256gcm16-ecp256",
+  "traffic_type": "ping",
+  "weak": false,
+  "ping_from": "client-a",
+  "ping_target": "10.2.0.10",
+  "pcap": "ping.pcap",
+  "ground_truth": true,
+  "lab_only": true,
+  "generated_at": "2026-10-07T16:26:41.390012+00:00",
+  "note": "Spec C5 is transport between gateways. This lab uses a subnet tunnel with the same AES-256-GCM/DH19 suite because kernel-libipsec cannot install transport SAs on this host (XFRM ESP is protocol-not-supported)."
+}

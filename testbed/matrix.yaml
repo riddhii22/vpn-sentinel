@@ -1,0 +1,172 @@
+# Curated IPsec lab matrix (not the full cross-product).
+# Day 1: C1, C3, C5. Day 2: C2, C4, C6, C7, C8, C10. C9 (IPv6) remains stretch.
+
+defaults:
+  ike_version: 2
+  ip: v4
+  auth: psk
+  local_id: gw-a.vpn-sentinel.lab
+  remote_id: gw-b.vpn-sentinel.lab
+  gw_a_transit: 10.10.0.10
+  gw_b_transit: 10.10.0.20
+  left_subnet: 10.1.0.0/24
+  right_subnet: 10.2.0.0/24
+  client_a: 10.2.0.10
+  ping_from: client-a
+
+configs:
+  C1:
+    enabled: true
+    mode: tunnel
+    encryption: AES-128-CBC
+    integrity: HMAC-SHA256
+    dh_group: 14
+    dh_name: modp2048
+    pfs: true
+    ip: v4
+    ike_proposal: aes128-sha256-modp2048
+    esp_proposal: aes128-sha256-modp2048
+    traffic: ping
+    ping_target: 10.2.0.10
+    ping_from: client-a
+
+  C3:
+    enabled: true
+    mode: tunnel
+    encryption: AES-128-GCM
+    integrity: AEAD
+    dh_group: 19
+    dh_name: ecp256
+    pfs: true
+    ip: v4
+    ike_proposal: aes128gcm16-prfsha256-ecp256
+    esp_proposal: aes128gcm16-ecp256
+    traffic: ping
+    ping_target: 10.2.0.10
+    ping_from: client-a
+
+  C5:
+    enabled: true
+    mode: tunnel
+    requested_mode: transport
+    encryption: AES-256-GCM
+    integrity: AEAD
+    dh_group: 19
+    dh_name: ecp256
+    pfs: true
+    ip: v4
+    ike_proposal: aes256gcm16-prfsha256-ecp256
+    esp_proposal: aes256gcm16-ecp256
+    traffic: ping
+    ping_target: 10.2.0.10
+    ping_from: client-a
+    note: Spec C5 is transport between gateways. This lab uses a subnet tunnel with the same AES-256-GCM/DH19 suite because kernel-libipsec cannot install transport SAs on this host (XFRM ESP is protocol-not-supported).
+
+  C2:
+    enabled: true
+    mode: tunnel
+    encryption: AES-256-CBC
+    integrity: HMAC-SHA256
+    dh_group: 14
+    dh_name: modp2048
+    pfs: true
+    ip: v4
+    ike_proposal: aes256-sha256-modp2048
+    esp_proposal: aes256-sha256-modp2048
+    traffic: ping
+    ping_target: 10.2.0.10
+    ping_from: client-a
+
+  C4:
+    enabled: true
+    mode: tunnel
+    encryption: AES-256-GCM
+    integrity: AEAD
+    dh_group: 20
+    dh_name: ecp384
+    pfs: true
+    ip: v4
+    ike_proposal: aes256gcm16-prfsha256-ecp384
+    esp_proposal: aes256gcm16-ecp384
+    traffic: ping
+    ping_target: 10.2.0.10
+    ping_from: client-a
+
+  C6:
+    enabled: true
+    mode: tunnel
+    requested_mode: transport
+    encryption: AES-128-CBC
+    integrity: HMAC-SHA256
+    dh_group: 14
+    dh_name: modp2048
+    pfs: false
+    ip: v4
+    ike_proposal: aes128-sha256-modp2048
+    esp_proposal: aes128-sha256
+    traffic: ping
+    ping_target: 10.2.0.10
+    ping_from: client-a
+    note: Spec C6 is transport with PFS off. Lab uses a subnet tunnel (kernel-libipsec cannot install transport) and ESP without a DH group (PFS off).
+
+  C7:
+    enabled: true
+    mode: tunnel
+    encryption: AES-128-CBC
+    integrity: HMAC-SHA1
+    dh_group: 2
+    dh_name: modp1024
+    pfs: false
+    ip: v4
+    ike_proposal: aes128-sha1-modp1024
+    esp_proposal: aes128-sha1
+    weak: true
+    traffic: ping
+    ping_target: 10.2.0.10
+    ping_from: client-a
+    note: Deliberately weak (SHA-1, DH 2, no PFS) so the assessment engine has something to flag.
+
+  C8:
+    enabled: true
+    mode: tunnel
+    encryption: 3DES
+    integrity: HMAC-SHA1
+    dh_group: 2
+    dh_name: modp1024
+    pfs: false
+    ip: v4
+    ike_proposal: 3des-sha1-modp1024
+    esp_proposal: 3des-sha1
+    weak: true
+    traffic: ping
+    ping_target: 10.2.0.10
+    ping_from: client-a
+    note: Deliberately weak (3DES, SHA-1, DH 2) so ENC-001 / HASH-001 / DH-001 can fire.
+
+  C9:
+    enabled: false
+    mode: tunnel
+    encryption: AES-256-GCM
+    integrity: AEAD
+    dh_group: 19
+    pfs: true
+    ip: v6
+    stretch: true
+
+  C10:
+    enabled: true
+    mode: tunnel
+    ike_version: 1
+    encryption: AES-128-CBC
+    integrity: HMAC-SHA1
+    dh_group: 2
+    dh_name: modp1024
+    pfs: false
+    ip: v4
+    ike_proposal: aes128-sha1-modp1024
+    esp_proposal: aes128-sha1
+    weak: true
+    traffic: ping
+    ping_target: 10.2.0.10
+    ping_from: client-a
+    note: Deliberately IKEv1 plus SHA-1 and DH 2 (IKE-001 + HASH-001 + DH-001).

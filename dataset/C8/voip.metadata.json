@@ -1,0 +1,22 @@
+{
+  "config_id": "C8",
+  "ike_version": 2,
+  "mode": "tunnel",
+  "requested_mode": "tunnel",
+  "encryption": "3DES",
+  "integrity": "HMAC-SHA1",
+  "dh_group": 2,
+  "pfs": false,
+  "ip": "v4",
+  "ike_proposal": "3des-sha1-modp1024",
+  "esp_proposal": "3des-sha1",
+  "traffic_type": "voip",
+  "weak": true,
+  "ping_from": "client-a",
+  "ping_target": "10.2.0.10",
+  "pcap": "voip.pcap",
+  "ground_truth": true,
+  "lab_only": true,
+  "generated_at": "2026-10-07T16:25:28.884133+00:00",
+  "note": "Deliberately weak (3DES, SHA-1, DH 2) so ENC-001 / HASH-001 / DH-001 can fire."
+}
